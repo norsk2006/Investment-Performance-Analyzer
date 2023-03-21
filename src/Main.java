@@ -41,7 +41,11 @@ public class Main extends JFrame {
     
     double time, principal, rate, period, result;
 
+    
     public Main() {
+    	
+    	
+    	
         setTitle("Compound Interest Calculator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 200);
@@ -49,6 +53,28 @@ public class Main extends JFrame {
         // Create the text field
         textField6.setEditable(false);
 
+        
+        XYSeries series = new XYSeries("Dollar Amount");
+        XYSeriesCollection dataset = new XYSeriesCollection();
+        
+
+        // Create the renderer and set the spline shape
+        XYSplineRenderer renderer = new XYSplineRenderer();
+        renderer.setSeriesShapesVisible(0, false);
+        
+        
+     // Create the chart
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "Dollar Amount Over Time", // chart title
+                "Time (years)", // x-axis label
+                "Dollar Amount", // y-axis label
+                dataset, // data
+                PlotOrientation.VERTICAL, // plot orientation
+                true, // include legend
+                true, // tooltips
+                false // urls
+        );
+        
         // Create the button
         button = new JButton("Calculate amount");
         button.addActionListener(new ActionListener() {
@@ -78,43 +104,30 @@ public class Main extends JFrame {
                 
                 String text4 = textField4.getText();
                 time = Double.parseDouble(text4);
+                
+             // Create the dataset
+                
+                for (int i = 0; i <= Math.ceil(time); i++) {
+                    double x = i;
+                    double y = interestCalculator.calculateInterest(principal, rate/100, period, i, false);
+                    System.out.println(y);
+                    series.add(x, y);
+                    if(y == Math.ceil(time)) {
+                    	result = y;
+                    }
+                }
+                
+                
+                dataset.addSeries(series);
+             // Set the renderer for the chart
+                XYPlot plot = (XYPlot) chart.getPlot();
+                plot.setRenderer(renderer);
+                
             }
         });
 
-        // Create the dataset
-        XYSeries series = new XYSeries("Dollar Amount");
-        for (int i = 1; i <= Math.ceil(time); i++) {
-            double x = i;
-            double y = interestCalculator.calculateInterest(principal, rate/100, period, time, false);
-            series.add(x, y);
-            if(y == Math.ceil(time)) {
-            	result = y;
-            }
-        }
         
-        
-        XYSeriesCollection dataset = new XYSeriesCollection();
-        dataset.addSeries(series);
 
-        // Create the chart
-        JFreeChart chart = ChartFactory.createXYLineChart(
-                "Dollar Amount Over Time", // chart title
-                "Time (years)", // x-axis label
-                "Dollar Amount", // y-axis label
-                dataset, // data
-                PlotOrientation.VERTICAL, // plot orientation
-                true, // include legend
-                true, // tooltips
-                false // urls
-        );
-
-        // Create the renderer and set the spline shape
-        XYSplineRenderer renderer = new XYSplineRenderer();
-        renderer.setSeriesShapesVisible(0, false);
-
-        // Set the renderer for the chart
-        XYPlot plot = (XYPlot) chart.getPlot();
-        plot.setRenderer(renderer);
 
         // Display the chart
         ChartPanel chartPanel = new ChartPanel(chart);
