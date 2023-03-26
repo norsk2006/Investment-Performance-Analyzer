@@ -39,7 +39,7 @@ public class Main extends JFrame {
 	
     private JButton button;
     
-    double time, principal, rate, period, result;
+    double time, principal, rate, period, result, monthlyContribution;
 
     
     public Main() {
@@ -105,19 +105,22 @@ public class Main extends JFrame {
                 String text4 = textField4.getText();
                 time = Double.parseDouble(text4);
                 
+                String text5 = textField4.getText();
+                monthlyContribution = Double.parseDouble(text5);
+                
              // Create the dataset
                 
                 for (int i = 0; i <= Math.ceil(time); i++) {
                     double x = i;
-                    double y = interestCalculator.calculateInterest(principal, rate/100, period, i, false);
+                    double y = interestCalculator.calculateInterest(principal + monthlyContribution*12, rate/100, period, x);
                     System.out.println(y);
                     series.add(x, y);
-                    if(y == Math.ceil(time)) {
-                    	result = y;
+                    if(x == Math.ceil(time)) {
+                    	result = Math.round(y*100.0)/100.0;
                     }
                 }
                 
-                
+                textField6.setText(Double.toString(result));
                 dataset.addSeries(series);
              // Set the renderer for the chart
                 XYPlot plot = (XYPlot) chart.getPlot();
@@ -185,8 +188,7 @@ public class Main extends JFrame {
         new Main();
         new interest();
         interest I = new interest();
-        I.string = "test";
-        System.out.println(I.string);
+
        
     }
 }
